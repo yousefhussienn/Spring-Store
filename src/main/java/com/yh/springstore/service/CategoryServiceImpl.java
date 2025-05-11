@@ -1,32 +1,36 @@
 package com.yh.springstore.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.yh.springstore.model.Category;
+import com.yh.springstore.repository.CategoryRepository;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    private List<Category> categories = new ArrayList<>();
-    private Long nextId = 1L;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+    
 
     @Override
     public List<Category> getCategories() {
-        return categories;
+        return categoryRepository.findAll();
     }
 
     @Override
-    public boolean addCategory(Category category) {
-        category.setCategoryId(nextId++);
-        return categories.add(category);
+    public Category addCategory(Category category) {
+        return categoryRepository.save(category);
     }
 
     @Override
     public String deleteCategory(Long id) {
+        List<Category> categories = categoryRepository.findAll();
+
         // Get category need to be deleted
         Category category = categories
                 .stream()
@@ -36,21 +40,23 @@ public class CategoryServiceImpl implements CategoryService {
                         "Category with id ( " + id + " ) not Found !"));
         
         // Delete category
-        categories.remove(category);
+        categoryRepository.delete(category);
         return "Category with id ( " + id + " ) deleted successfully";
     }
 
     @Override
     public String updateCategory(Long id, Category newCategory) {
         // Check new category object is not null 
-        if(newCategory.equals(null))
+        if(newCategory.equals(null)) 
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Input: Provide new Category data!");
         // Check new category name is not empty
-        if(newCategory.getCategoryName().isEmpty())
+        if(newCategory.getCategoryName() == null || newCategory.getCategoryName().isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Input: Category name required!");
 
-        // Get category need to be updated
-        Category category = categories
+        List<Category> categories = categoryRepository.findAll();
+
+        // Get existing category need to be updated
+        Category existingCategory = categories
                 .stream()
                 .filter(cat -> cat.getCategoryId().equals(id))
                 .findFirst()
@@ -58,7 +64,8 @@ public class CategoryServiceImpl implements CategoryService {
                         "Category with id ( " + id + " ) not Found !"));
         
         // Update category values
-        category.setCategoryName(newCategory.getCategoryName());
+        existingCategory.setCategoryName(newCategory.getCategoryName());
+        categoryRepository.save(existingCategory);
         return "Category with id ( " + id + " ) updated successfully";
     }
 

@@ -7,7 +7,7 @@ import com.yh.springstore.model.Category;
 public interface CategoryService {
     List<Category> getCategories();
 
-    boolean addCategory(Category category);
+    Category addCategory(Category category);
 
     String deleteCategory(Long id);
 
