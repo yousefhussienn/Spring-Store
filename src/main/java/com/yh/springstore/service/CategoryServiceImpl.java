@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,7 +16,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
-    
 
     @Override
     public List<Category> getCategories() {
@@ -30,40 +30,48 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public String deleteCategory(Long id) {
-        List<Category> categories = categoryRepository.findAll();
 
-        // Get category need to be deleted
-        Category category = categories
-                .stream()
-                .filter(cat -> cat.getCategoryId().equals(id))
-                .findFirst()
+        Category existingCategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Category with id ( " + id + " ) not Found !"));
-        
+
+        // ** BELOW COMMENTED IS THE OLD WAY FOR REFERENCE **
+        // List<Category> categories = categoryRepository.findAll();
+        // Category existingCategory = categories
+        //         .stream()
+        //         .filter(cat -> cat.getCategoryId().equals(id))
+        //         .findFirst()
+        //         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+        //                 "Category with id ( " + id + " ) not Found !"));
+
         // Delete category
-        categoryRepository.delete(category);
+        categoryRepository.delete(existingCategory);
         return "Category with id ( " + id + " ) deleted successfully";
     }
 
     @Override
     public String updateCategory(Long id, Category newCategory) {
-        // Check new category object is not null 
-        if(newCategory.equals(null)) 
+        // Check new category object is not null
+        if (newCategory.equals(null))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Input: Provide new Category data!");
         // Check new category name is not empty
-        if(newCategory.getCategoryName() == null || newCategory.getCategoryName().isEmpty())
+        if (newCategory.getCategoryName() == null || newCategory.getCategoryName().isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Input: Category name required!");
 
-        List<Category> categories = categoryRepository.findAll();
-
-        // Get existing category need to be updated
-        Category existingCategory = categories
-                .stream()
-                .filter(cat -> cat.getCategoryId().equals(id))
-                .findFirst()
+        // Get from DB the existing category needs to be updated
+        Category existingCategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Category with id ( " + id + " ) not Found !"));
-        
+
+        // ** BELOW COMMENTED IS THE OLD WAY FOR REFERENCE **
+        // List<Category> categories = categoryRepository.findAll();
+        // Category existingCategory = categories
+        //         .stream()
+        //         .filter(cat -> cat.getCategoryId().equals(id))
+        //         .findFirst()
+        //         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+        //                 "Category with id ( " + id + " ) not Found !"));
+
         // Update category values
         existingCategory.setCategoryName(newCategory.getCategoryName());
         categoryRepository.save(existingCategory);
