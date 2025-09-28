@@ -24,6 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category addCategory(Category category) {
+        category.setCategoryId(null); // ignore id if sent (id is auto generated)
         return categoryRepository.save(category);
     }
 
