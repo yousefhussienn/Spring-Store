@@ -20,7 +20,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getCategories() {
-        return categoryRepository.findAll();
+        List<Category> categories = categoryRepository.findAll();
+        if(categories.isEmpty())
+            throw new APIException("No Categories created yet !");
+        return categories;
     }
 
     @Override
