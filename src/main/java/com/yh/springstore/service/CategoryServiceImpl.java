@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.yh.springstore.exception.APIException;
 import com.yh.springstore.exception.ResourceNotFoundException;
 import com.yh.springstore.model.Category;
 import com.yh.springstore.repository.CategoryRepository;
@@ -24,16 +25,19 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category addCategory(Category category) {
+        // Check if category with same name exists
+        Category existingCategory = categoryRepository.findByCategoryName(category.getCategoryName());
+        if(existingCategory != null)
+            throw new APIException("Category with name " + category.getCategoryName() + " already exists !");
+
         category.setCategoryId(null); // ignore id if sent (id is auto generated)
         return categoryRepository.save(category);
     }
 
     @Override
     public String deleteCategory(Long id) {
-
         Category existingCategory = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Category with id ( " + id + " ) not Found !"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", id));
 
         // ** BELOW COMMENTED IS THE OLD WAY FOR REFERENCE **
         // List<Category> categories = categoryRepository.findAll();
