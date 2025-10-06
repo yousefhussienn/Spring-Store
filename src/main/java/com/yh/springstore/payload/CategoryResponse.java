@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryResponse {
+    // Response Content (List of Catgories) 
     private List<CategoryDTO> content;
+
+    // Pagination Data
     private int pageNumber;
     private int pageSize;
     private long totalElements;

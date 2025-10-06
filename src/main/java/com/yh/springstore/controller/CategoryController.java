@@ -30,8 +30,7 @@ public class CategoryController {
     @GetMapping("/public/categories")
     public ResponseEntity<CategoryResponse> getCategories(
             @RequestParam(required = false, defaultValue = AppConstants.PAGE_NUMBER) int pageNumber,
-            @RequestParam(required = false, defaultValue = AppConstants.PAGE_SIZE) int pageSize
-    ) {
+            @RequestParam(required = false, defaultValue = AppConstants.PAGE_SIZE) int pageSize) {
         CategoryResponse categoryResponse = categoryService.getCategories(pageNumber, pageSize);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
@@ -49,7 +48,8 @@ public class CategoryController {
     }
 
     @PutMapping("/admin/categories/{id}")
-    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id,
+    public ResponseEntity<CategoryDTO> updateCategory(
+            @PathVariable Long id,
             @Valid @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO savedCategoryDTO = categoryService.updateCategory(id, categoryDTO);
         return new ResponseEntity<>(savedCategoryDTO, HttpStatus.OK);
