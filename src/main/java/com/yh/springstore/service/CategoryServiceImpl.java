@@ -80,12 +80,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public String updateCategory(Long id, Category newCategory) {
+    public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
+        // Map the incoming CategoryDTO to a Category entity
+        Category newCategory = modelMapper.map(categoryDTO, Category.class);
+
         // Check new category object is not null
         if (newCategory.equals(null))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Input: Provide new Category data!");
         // Check new category name is not empty
-        if (newCategory.getCategoryName() == null || newCategory.getCategoryName().isEmpty())
+        else if (newCategory.getCategoryName() == null || newCategory.getCategoryName().isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Input: Category name required!");
 
         // Get from DB the existing category needs to be updated
@@ -103,8 +106,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         // Update category values
         existingCategory.setCategoryName(newCategory.getCategoryName());
-        categoryRepository.save(existingCategory);
-        return "Category with id ( " + id + " ) updated successfully";
+        newCategory = categoryRepository.save(existingCategory);
+        
+        // Map the saved Category entity back to a DTO and return
+        CategoryDTO newCategoryDTO = modelMapper.map(newCategory, CategoryDTO.class);
+        return newCategoryDTO;
     }
 
 }
