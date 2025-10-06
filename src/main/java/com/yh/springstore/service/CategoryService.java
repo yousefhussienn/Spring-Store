@@ -8,7 +8,7 @@ public interface CategoryService {
 
     CategoryDTO addCategory(CategoryDTO categoryDTO);
 
-    String deleteCategory(Long id);
+    CategoryDTO deleteCategory(Long id);
 
     CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO);
 
