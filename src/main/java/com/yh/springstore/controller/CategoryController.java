@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -26,14 +27,17 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/public/categories")
-    public ResponseEntity<CategoryResponse> getCategories() {
-        CategoryResponse categoryResponse = categoryService.getCategories();
+    public ResponseEntity<CategoryResponse> getCategories(
+            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(required = false, defaultValue = "100") int pageSize
+    ) {
+        CategoryResponse categoryResponse = categoryService.getCategories(pageNumber, pageSize);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @PostMapping("/public/categories")
     public ResponseEntity<CategoryDTO> addCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
-        CategoryDTO savedCategoryDTO = categoryService.addCategory(categoryDTO);  
+        CategoryDTO savedCategoryDTO = categoryService.addCategory(categoryDTO);
         return new ResponseEntity<>(savedCategoryDTO, HttpStatus.CREATED);
     }
 
@@ -44,7 +48,8 @@ public class CategoryController {
     }
 
     @PutMapping("/admin/categories/{id}")
-    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id,
+            @Valid @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO savedCategoryDTO = categoryService.updateCategory(id, categoryDTO);
         return new ResponseEntity<>(savedCategoryDTO, HttpStatus.OK);
     }
