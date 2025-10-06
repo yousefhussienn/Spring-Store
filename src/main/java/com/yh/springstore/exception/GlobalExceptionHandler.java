@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> customMethodArgumentNotValidException (MethodArgumentNotValidException e) {
+    public ResponseEntity<Map<String, String>> myMethodArgumentNotValidException (MethodArgumentNotValidException e) {
         Map<String, String> response = new HashMap<>();
         e.getBindingResult().getFieldErrors().forEach(err -> {
             response.put(err.getField(), err.getDefaultMessage());
@@ -22,13 +22,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> customResourceNotFoundException (ResourceNotFoundException e) {
+    public ResponseEntity<String> myResourceNotFoundException (ResourceNotFoundException e) {
         String errorMessage = e.getMessage();
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(APIException.class)
-    public ResponseEntity<String> customResourceNotFoundException (APIException e) {
+    public ResponseEntity<String> myAPIException (APIException e) {
         String errorMessage = e.getMessage();
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
