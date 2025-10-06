@@ -1,7 +1,7 @@
 package com.yh.springstore.controller;
 
-import java.util.List;
 import com.yh.springstore.model.Category;
+import com.yh.springstore.payload.CategoryDTO;
 import com.yh.springstore.payload.CategoryResponse;
 import com.yh.springstore.service.CategoryService;
 
@@ -33,9 +33,9 @@ public class CategoryController {
     }
 
     @PostMapping("/public/categories")
-    public ResponseEntity<String> addCategory(@Valid @RequestBody Category category) {
-        categoryService.addCategory(category);  
-        return new ResponseEntity<>("Category added successfully", HttpStatus.CREATED);
+    public ResponseEntity<CategoryDTO> addCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO savedCategoryDTO = categoryService.addCategory(categoryDTO);  
+        return new ResponseEntity<>(savedCategoryDTO, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/admin/categories/{id}")
