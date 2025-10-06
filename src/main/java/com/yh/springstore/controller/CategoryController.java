@@ -1,6 +1,5 @@
 package com.yh.springstore.controller;
 
-import com.yh.springstore.model.Category;
 import com.yh.springstore.payload.CategoryDTO;
 import com.yh.springstore.payload.CategoryResponse;
 import com.yh.springstore.service.CategoryService;
