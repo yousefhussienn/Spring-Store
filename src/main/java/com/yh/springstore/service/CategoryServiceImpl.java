@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,9 +28,14 @@ public class CategoryServiceImpl implements CategoryService {
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryResponse getCategories() {
-        // Fetch all categories from the database
-        List<Category> categories = categoryRepository.findAll();
+    public CategoryResponse getCategories(int pageNumber, int pageSize) {
+        
+        // Fetch categories from the database - with Pagination -
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+        Page<Category> categoriesPage = categoryRepository.findAll(pageDetails);
+        List<Category> categories = categoriesPage.getContent();
+        
+        // Check if no categories returned
         if (categories.isEmpty())
             throw new APIException("No Categories created yet !");
 
