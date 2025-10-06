@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,13 +29,18 @@ public class CategoryServiceImpl implements CategoryService {
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryResponse getCategories(int pageNumber, int pageSize) {
+    public CategoryResponse getCategories(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+
+        // Configure Sorting Parameters
+        Sort pageSort = sortOrder.equalsIgnoreCase("ASC")
+        ? Sort.by(sortBy).ascending()
+        : Sort.by(sortBy).descending();
         
-        // Fetch categories from the database - with Pagination -
-        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+        // Fetch categories from the database - with Pagination & Sorting -
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, pageSort);
         Page<Category> categoriesPage = categoryRepository.findAll(pageDetails);
         List<Category> categories = categoriesPage.getContent();
-        
+
         // Check if no categories returned
         if (categories.isEmpty())
             throw new APIException("No Categories created yet !");
@@ -46,13 +52,12 @@ public class CategoryServiceImpl implements CategoryService {
 
         // Set Category Response object and return
         CategoryResponse categoryResponse = new CategoryResponse(
-            categoryDTOs,
-            categoriesPage.getNumber(),
-            categoriesPage.getSize(),
-            categoriesPage.getTotalElements(),
-            categoriesPage.getTotalPages(),
-            categoriesPage.isLast()
-        );
+                categoryDTOs,
+                categoriesPage.getNumber(),
+                categoriesPage.getSize(),
+                categoriesPage.getTotalElements(),
+                categoriesPage.getTotalPages(),
+                categoriesPage.isLast());
         return categoryResponse;
     }
 
@@ -68,7 +73,7 @@ public class CategoryServiceImpl implements CategoryService {
         // Save Category in DB
         newCategory.setCategoryId(null); // ignore id if sent (id is auto generated)
         newCategory = categoryRepository.save(newCategory);
-        
+
         // Map the saved Category entity back to a DTO and return
         CategoryDTO newCategoryDTO = modelMapper.map(newCategory, CategoryDTO.class);
         return newCategoryDTO;
@@ -124,7 +129,7 @@ public class CategoryServiceImpl implements CategoryService {
         // Update Category with the new values
         existingCategory.setCategoryName(newCategory.getCategoryName());
         newCategory = categoryRepository.save(existingCategory);
-        
+
         // Map the updated Category entity to a DTO and return
         CategoryDTO newCategoryDTO = modelMapper.map(newCategory, CategoryDTO.class);
         return newCategoryDTO;

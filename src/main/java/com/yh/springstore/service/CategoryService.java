@@ -4,7 +4,7 @@ import com.yh.springstore.payload.CategoryDTO;
 import com.yh.springstore.payload.CategoryResponse;
 
 public interface CategoryService {
-    CategoryResponse getCategories(int pageNumber, int pageSize);
+    CategoryResponse getCategories(int pageNumber, int pageSize, String sortBy, String sortOrder);
 
     CategoryDTO addCategory(CategoryDTO categoryDTO);
 
