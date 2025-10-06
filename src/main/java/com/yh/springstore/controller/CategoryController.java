@@ -1,5 +1,6 @@
 package com.yh.springstore.controller;
 
+import com.yh.springstore.config.AppConstants;
 import com.yh.springstore.payload.CategoryDTO;
 import com.yh.springstore.payload.CategoryResponse;
 import com.yh.springstore.service.CategoryService;
@@ -28,8 +29,8 @@ public class CategoryController {
 
     @GetMapping("/public/categories")
     public ResponseEntity<CategoryResponse> getCategories(
-            @RequestParam(required = false, defaultValue = "0") int pageNumber,
-            @RequestParam(required = false, defaultValue = "100") int pageSize
+            @RequestParam(required = false, defaultValue = AppConstants.PAGE_NUMBER) int pageNumber,
+            @RequestParam(required = false, defaultValue = AppConstants.PAGE_SIZE) int pageSize
     ) {
         CategoryResponse categoryResponse = categoryService.getCategories(pageNumber, pageSize);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
