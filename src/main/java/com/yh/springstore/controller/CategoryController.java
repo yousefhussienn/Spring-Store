@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api")
@@ -34,28 +33,20 @@ public class CategoryController {
 
     @PostMapping("/public/categories")
     public ResponseEntity<String> addCategory(@Valid @RequestBody Category category) {
-        categoryService.addCategory(category);
+        categoryService.addCategory(category);  
         return new ResponseEntity<>("Category added successfully", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/admin/categories/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
-        try {
-            String status = categoryService.deleteCategory(id);
-            return new ResponseEntity<>(status, HttpStatus.OK);
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
-        }
+        String status = categoryService.deleteCategory(id);
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
 
     @PutMapping("/admin/categories/{id}")
-    public ResponseEntity<String> updateCategory(@PathVariable Long id, @RequestBody Category category) {
-        try {
-            String status = categoryService.updateCategory(id, category);
-            return new ResponseEntity<>(status, HttpStatus.OK);
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(e.getReason(), HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<String> updateCategory(@PathVariable Long id, @Valid @RequestBody Category category) {
+        String status = categoryService.updateCategory(id, category);
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
 
 }
