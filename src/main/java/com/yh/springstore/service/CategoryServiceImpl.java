@@ -45,8 +45,14 @@ public class CategoryServiceImpl implements CategoryService {
                 .toList();
 
         // Set Category Response object and return
-        CategoryResponse categoryResponse = new CategoryResponse();
-        categoryResponse.setContent(categoryDTOs);
+        CategoryResponse categoryResponse = new CategoryResponse(
+            categoryDTOs,
+            categoriesPage.getNumber(),
+            categoriesPage.getSize(),
+            categoriesPage.getTotalElements(),
+            categoriesPage.getTotalPages(),
+            categoriesPage.isLast()
+        );
         return categoryResponse;
     }
 
