@@ -26,17 +26,19 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse getCategories() {
+        // Fetch all categories from the database
         List<Category> categories = categoryRepository.findAll();
         if (categories.isEmpty())
             throw new APIException("No Categories created yet !");
 
+        // Map Category entities to DTOs using ModelMapper
         List<CategoryDTO> categoryDTOs = categories.stream()
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .toList();
-        
+
+        // Set Category Response object
         CategoryResponse categoryResponse = new CategoryResponse();
         categoryResponse.setContent(categoryDTOs);
-
         return categoryResponse;
     }
 
