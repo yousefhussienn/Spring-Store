@@ -1,11 +1,10 @@
 package com.yh.springstore.service;
 
-import java.util.List;
-
 import com.yh.springstore.model.Category;
+import com.yh.springstore.payload.CategoryResponse;
 
 public interface CategoryService {
-    List<Category> getCategories();
+    CategoryResponse getCategories();
 
     Category addCategory(Category category);
 

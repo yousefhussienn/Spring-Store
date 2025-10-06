@@ -2,6 +2,7 @@ package com.yh.springstore.controller;
 
 import java.util.List;
 import com.yh.springstore.model.Category;
+import com.yh.springstore.payload.CategoryResponse;
 import com.yh.springstore.service.CategoryService;
 
 import jakarta.validation.Valid;
@@ -26,9 +27,9 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/public/categories")
-    public ResponseEntity<List<Category>> getCategories() {
-        List<Category> categories = categoryService.getCategories();
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+    public ResponseEntity<CategoryResponse> getCategories() {
+        CategoryResponse categoryResponse = categoryService.getCategories();
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @PostMapping("/public/categories")
