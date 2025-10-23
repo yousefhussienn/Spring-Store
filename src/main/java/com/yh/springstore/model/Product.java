@@ -20,10 +20,12 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
     private String productName;
+    private String imageUrl;
     private String description;
+
     private int quantity;
     private double price;
-    private double specialPrice;
+    private double discountPercent;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
