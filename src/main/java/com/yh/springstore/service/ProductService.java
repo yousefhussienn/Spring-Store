@@ -6,5 +6,7 @@ import com.yh.springstore.payload.ProductResponse;
 public interface ProductService {
     ProductResponse getProducts();
 
+    ProductResponse getProductsByCategory(Long categoryId);
+
     ProductDTO addProduct(ProductDTO productDTO, Long categoryId);
 }
