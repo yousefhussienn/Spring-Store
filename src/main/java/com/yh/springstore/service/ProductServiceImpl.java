@@ -1,13 +1,17 @@
 package com.yh.springstore.service;
 
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yh.springstore.exception.APIException;
 import com.yh.springstore.exception.ResourceNotFoundException;
 import com.yh.springstore.model.Category;
 import com.yh.springstore.model.Product;
 import com.yh.springstore.payload.ProductDTO;
+import com.yh.springstore.payload.ProductResponse;
 import com.yh.springstore.repository.CategoryRepository;
 import com.yh.springstore.repository.ProductRepository;
 
@@ -22,6 +26,26 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Override
+    public ProductResponse getProducts() {
+        
+        // Fetch products from the database
+        List<Product> products = productRepository.findAll();
+        
+        // Check if no products returned
+        if (products.isEmpty())
+            throw new APIException("No Categories created yet !");
+
+        // Map Product entities to DTOs using ModelMapper
+        List<ProductDTO> productDTOs = products.stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .toList();
+        
+        // Set Product Response object and return
+        ProductResponse productResponse = new ProductResponse(productDTOs);
+        return productResponse;
+    }
 
     @Override
     public ProductDTO addProduct(ProductDTO productDTO, Long categoryId) {
