@@ -6,7 +6,9 @@ import com.yh.springstore.payload.ProductResponse;
 public interface ProductService {
     ProductResponse getProducts();
 
-    ProductResponse getProductsByCategory(Long categoryId);
+    ProductResponse searchProductsByCategory(Long categoryId);
 
     ProductDTO addProduct(ProductDTO productDTO, Long categoryId);
+
+    ProductResponse searchProductsByKeyword(String keyword);
 }

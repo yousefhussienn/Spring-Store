@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse getProductsByCategory(Long categoryId) {
+    public ProductResponse searchProductsByCategory(Long categoryId) {
         // Get the new Product Category by ID -if exists-
         Category existingCategory = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "CategoryId", categoryId));
@@ -89,6 +89,25 @@ public class ProductServiceImpl implements ProductService {
         // Map the saved Product entity back to a DTO and return
         ProductDTO newProductDTO = modelMapper.map(newProduct, ProductDTO.class);
         return newProductDTO;
+    }
+
+    @Override
+    public ProductResponse searchProductsByKeyword(String keyword) {
+        // Fetch products -with Keyword- from the Database
+        List<Product> products = productRepository.findByProductNameLikeIgnoreCase("%" + keyword + "%");
+        
+        // Check if no products returned
+        if (products.isEmpty())
+            throw new APIException("No Products found with the given keyword!");
+
+        // Map Product entities to DTOs using ModelMapper
+        List<ProductDTO> productDTOs = products.stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .toList();
+        
+        // Set Product Response object and return
+        ProductResponse productResponse = new ProductResponse(productDTOs);
+        return productResponse;
     }
 
 }

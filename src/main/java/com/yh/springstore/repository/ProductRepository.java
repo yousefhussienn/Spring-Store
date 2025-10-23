@@ -10,5 +10,7 @@ import com.yh.springstore.model.Product;
 public interface ProductRepository extends JpaRepository<Product, Long>{
 
     List<Product> findByCategory(Category existingCategory);
+
+    List<Product> findByProductNameLikeIgnoreCase(String string);
     
 }
