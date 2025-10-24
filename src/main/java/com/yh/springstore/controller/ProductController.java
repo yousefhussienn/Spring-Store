@@ -21,6 +21,8 @@ import com.yh.springstore.payload.ProductDTO;
 import com.yh.springstore.payload.ProductResponse;
 import com.yh.springstore.service.ProductService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api")
 public class ProductController {
@@ -47,7 +49,7 @@ public class ProductController {
     }
 
     @PostMapping("/admin/categories/{categoryId}/products")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO, @PathVariable Long categoryId) {
+    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO, @PathVariable Long categoryId) {
         ProductDTO savedProductDTO = productService.addProduct(productDTO, categoryId);
         return new ResponseEntity<>(savedProductDTO, HttpStatus.CREATED);
     }
@@ -61,7 +63,7 @@ public class ProductController {
     @PutMapping("/admin/products/{productId}")
     public ResponseEntity<ProductDTO> updateProduct(
             @PathVariable Long productId, 
-            @RequestBody ProductDTO productDTO) {
+            @Valid @RequestBody ProductDTO productDTO) {
         ProductDTO updatedProductDTO = productService.updateProduct(productId, productDTO);
         return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
     }
