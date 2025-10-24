@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.yh.springstore.config.AppConstants;
-import com.yh.springstore.payload.CategoryDTO;
 import com.yh.springstore.payload.ProductDTO;
 import com.yh.springstore.payload.ProductResponse;
 import com.yh.springstore.service.ProductService;
