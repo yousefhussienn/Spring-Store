@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +36,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private FileService fileService;
+
+    @Value("${project.images.path}")
+    private String mainImagesPath;
+
+    private String productsImageDir = "products/";
 
     @Override
     public ProductResponse getProducts() {
@@ -172,7 +178,7 @@ public class ProductServiceImpl implements ProductService {
             .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
         
         // Upload image to server
-        String path = "images/products/";
+        String path = mainImagesPath + productsImageDir; // images/products/
         String filename = fileService.uploadImage(path, imageFile);
 
         // Update Product with the new image file name
