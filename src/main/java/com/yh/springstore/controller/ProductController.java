@@ -1,5 +1,7 @@
 package com.yh.springstore.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.yh.springstore.payload.CategoryDTO;
 import com.yh.springstore.payload.ProductDTO;
@@ -62,4 +66,11 @@ public class ProductController {
         return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
     }
 
+    @PostMapping("/admin/products/{productId}/image")
+    public ResponseEntity<ProductDTO> updateProductImage(
+            @PathVariable Long productId, 
+            @RequestParam("file") MultipartFile imageFile) throws IOException {
+        ProductDTO updatedProductDTO = productService.updateProductImage(productId, imageFile);
+        return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
+    }
 }

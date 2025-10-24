@@ -1,5 +1,9 @@
 package com.yh.springstore.service;
 
+import java.io.IOException;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.yh.springstore.payload.ProductDTO;
 import com.yh.springstore.payload.ProductResponse;
 
@@ -15,4 +19,6 @@ public interface ProductService {
     ProductDTO deleteProduct(Long productId);
 
     ProductDTO updateProduct(Long productId, ProductDTO productDTO);
+
+    ProductDTO updateProductImage(Long productId, MultipartFile imageFile) throws IOException;
 }

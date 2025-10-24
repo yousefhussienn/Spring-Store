@@ -1,10 +1,16 @@
 package com.yh.springstore.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.yh.springstore.exception.APIException;
 import com.yh.springstore.exception.ResourceNotFoundException;
@@ -154,6 +160,49 @@ public class ProductServiceImpl implements ProductService {
         // Map the deleted Product entity to a DTO and return
         ProductDTO deletedProductDTO = modelMapper.map(existingProduct, ProductDTO.class);
         return deletedProductDTO;
+    }
+
+    @Override
+    public ProductDTO updateProductImage(Long productId, MultipartFile imageFile) throws IOException {
+        // Get the Product by ID -if exists-
+        Product existingProduct = productRepository.findById(productId)
+            .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+        
+        // Upload image to server
+        String path = "images/products/";
+        String filename = uploadImage(path, imageFile);
+
+        // Update Product with the new image file name
+        existingProduct.setImageUrl(filename);
+        
+        // Update Product in Database
+        productRepository.save(existingProduct);
+
+        // Map the deleted Product entity to a DTO and return
+        ProductDTO deletedProductDTO = modelMapper.map(existingProduct, ProductDTO.class);
+        return deletedProductDTO;
+    }
+
+    private String uploadImage(String path, MultipartFile file) throws IOException {
+        
+        // Get current file name and extension
+        String originalFileName = file.getOriginalFilename();
+        String fileExtension = originalFileName.substring(originalFileName.lastIndexOf('.')); //eg. ".png"
+
+        // Generate new filename using UUID
+        String randomUUID = UUID.randomUUID().toString();
+        String fileName = randomUUID + fileExtension;
+        String filePath = path + File.separator + fileName; // Use of "File.separator" for OS compatibility
+
+        // Check if path exists and create
+        File folder = new File(path);
+        if(!folder.exists())
+            folder.mkdirs();
+
+        // Upload file to server on the created Path
+        Files.copy(file.getInputStream(), Path.of(filePath));
+        
+        return fileName;
     }
 
 }
