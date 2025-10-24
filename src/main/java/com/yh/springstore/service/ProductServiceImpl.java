@@ -42,10 +42,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse getProducts() {
-        
+
         // Fetch products from the database
         List<Product> products = productRepository.findAll();
-        
+
         // Check if no products returned
         if (products.isEmpty())
             throw new APIException("No Categories created yet !");
@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> productDTOs = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();
-        
+
         // Set Product Response object and return
         ProductResponse productResponse = new ProductResponse(productDTOs);
         return productResponse;
@@ -66,12 +66,12 @@ public class ProductServiceImpl implements ProductService {
         Category existingCategory = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "CategoryId", categoryId));
 
-        // Fetch products from the database
-        List<Product> products = productRepository.findByCategory(existingCategory);
-        
+        // Fetch products from category
+        List<Product> products = existingCategory.getProducts();
+
         // Check if no products returned
         if (products.isEmpty())
-            throw new APIException("No Categories created yet !");
+            throw new APIException("No Products created in this Category yet!");
 
         // Map Product entities to DTOs using ModelMapper
         List<ProductDTO> productDTOs = products.stream()
@@ -92,11 +92,18 @@ public class ProductServiceImpl implements ProductService {
         // Map the incoming ProductDTO to a Product entity
         Product newProduct = modelMapper.map(productDTO, Product.class);
 
+        // Check if Product name already exists in Category
+        for(Product product : existingCategory.getProducts())
+            if(product.getProductName().equals(newProduct.getProductName()))
+                throw new APIException("Product with same name already exists in Category!");
+
         // Associate the new Product with the found Category
         newProduct.setCategory(existingCategory);
 
         // Save Category in DB
         newProduct.setProductId(null); // ignore id if sent (id is auto generated)
+        if (newProduct.getImageUrl() == null)
+            newProduct.setImageUrl("default.png");
         newProduct = productRepository.save(newProduct);
 
         // Map the saved Product entity back to a DTO and return
@@ -108,7 +115,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse searchProductsByKeyword(String keyword) {
         // Fetch products -with Keyword- from the Database
         List<Product> products = productRepository.findByProductNameLikeIgnoreCase("%" + keyword + "%");
-        
+
         // Check if no products returned
         if (products.isEmpty())
             throw new APIException("No Products found with the given keyword!");
@@ -117,7 +124,7 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> productDTOs = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();
-        
+
         // Set Product Response object and return
         ProductResponse productResponse = new ProductResponse(productDTOs);
         return productResponse;
@@ -127,7 +134,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO deleteProduct(Long productId) {
         // Get the Product by ID -if exists-
         Product existingProduct = productRepository.findById(productId)
-            .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
         // Delete Product
         productRepository.delete(existingProduct);
@@ -141,26 +148,26 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
         // Get the Product by ID -if exists-
         Product existingProduct = productRepository.findById(productId)
-            .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
         // Map the incoming ProductDTO to a Product entity
         Product newProduct = modelMapper.map(productDTO, Product.class);
-        
+
         // Update Product with the new values
-        if(newProduct.getProductName() != null || !newProduct.getProductName().isEmpty())
+        if (newProduct.getProductName() != null || !newProduct.getProductName().isEmpty())
             existingProduct.setProductName(newProduct.getProductName());
-        if(newProduct.getDescription() != null || !newProduct.getDescription().isEmpty())
+        if (newProduct.getDescription() != null || !newProduct.getDescription().isEmpty())
             existingProduct.setDescription(newProduct.getDescription());
-        if(newProduct.getImageUrl() != null || !newProduct.getImageUrl().isEmpty())
+        if (newProduct.getImageUrl() != null || !newProduct.getImageUrl().isEmpty())
             existingProduct.setImageUrl(newProduct.getImageUrl());
 
-        if(newProduct.getQuantity() != 0)
+        if (newProduct.getQuantity() != 0)
             existingProduct.setQuantity(newProduct.getQuantity());
-        if(newProduct.getPrice() != 0.0)
+        if (newProduct.getPrice() != 0.0)
             existingProduct.setPrice(newProduct.getPrice());
-        if(newProduct.getDiscountPercent() != 0.0)
+        if (newProduct.getDiscountPercent() != 0.0)
             existingProduct.setDiscountPercent(newProduct.getDiscountPercent());
-        
+
         // Update Product in Database
         productRepository.save(existingProduct);
 
@@ -173,14 +180,14 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO updateProductImage(Long productId, MultipartFile imageFile) throws IOException {
         // Get the Product by ID -if exists-
         Product existingProduct = productRepository.findById(productId)
-            .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-        
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+
         // Upload image to server
         String filename = fileService.uploadImage(productsImagePath, imageFile);
 
         // Update Product with the new image file name
         existingProduct.setImageUrl(filename);
-        
+
         // Update Product in Database
         productRepository.save(existingProduct);
 
@@ -188,6 +195,5 @@ public class ProductServiceImpl implements ProductService {
         ProductDTO deletedProductDTO = modelMapper.map(existingProduct, ProductDTO.class);
         return deletedProductDTO;
     }
-
 
 }
