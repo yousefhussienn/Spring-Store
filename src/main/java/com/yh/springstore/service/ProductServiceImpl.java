@@ -37,10 +37,8 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private FileService fileService;
 
-    @Value("${project.images.path}")
-    private String mainImagesPath;
-
-    private String productsImageDir = "products/";
+    @Value("${project.images.products-path}")
+    private String productsImagePath;
 
     @Override
     public ProductResponse getProducts() {
@@ -178,8 +176,7 @@ public class ProductServiceImpl implements ProductService {
             .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
         
         // Upload image to server
-        String path = mainImagesPath + productsImageDir; // images/products/
-        String filename = fileService.uploadImage(path, imageFile);
+        String filename = fileService.uploadImage(productsImagePath, imageFile);
 
         // Update Product with the new image file name
         existingProduct.setImageUrl(filename);
