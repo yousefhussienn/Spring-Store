@@ -54,12 +54,12 @@ public class ProductController {
         return new ResponseEntity<>(deletedProductDTO, HttpStatus.OK);
     }
 
-    // @PutMapping("/admin/products/{productId}")
-    // public ResponseEntity<ProductDTO> updateProduct(
-    //         @PathVariable Long productId, 
-    //         @RequestBody ProductDTO productDTO) {
-    //     ProductDTO updatedProductDTO = productService.updateProduct(productId, productDTO);
-    //     return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
-    // }
+    @PutMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> updateProduct(
+            @PathVariable Long productId, 
+            @RequestBody ProductDTO productDTO) {
+        ProductDTO updatedProductDTO = productService.updateProduct(productId, productDTO);
+        return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
+    }
 
 }

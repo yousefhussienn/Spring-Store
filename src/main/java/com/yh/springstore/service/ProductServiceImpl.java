@@ -124,4 +124,36 @@ public class ProductServiceImpl implements ProductService {
         return deletedProductDTO;
     }
 
+    @Override
+    public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
+        // Get the Product by ID -if exists-
+        Product existingProduct = productRepository.findById(productId)
+            .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+
+        // Map the incoming ProductDTO to a Product entity
+        Product newProduct = modelMapper.map(productDTO, Product.class);
+        
+        // Update Product with the new values
+        if(newProduct.getProductName() != null || !newProduct.getProductName().isEmpty())
+            existingProduct.setProductName(newProduct.getProductName());
+        if(newProduct.getDescription() != null || !newProduct.getDescription().isEmpty())
+            existingProduct.setDescription(newProduct.getDescription());
+        if(newProduct.getImageUrl() != null || !newProduct.getImageUrl().isEmpty())
+            existingProduct.setImageUrl(newProduct.getImageUrl());
+
+        if(newProduct.getQuantity() != 0)
+            existingProduct.setQuantity(newProduct.getQuantity());
+        if(newProduct.getPrice() != 0.0)
+            existingProduct.setPrice(newProduct.getPrice());
+        if(newProduct.getDiscountPercent() != 0.0)
+            existingProduct.setDiscountPercent(newProduct.getDiscountPercent());
+        
+        // Update Product in Database
+        productRepository.save(existingProduct);
+
+        // Map the deleted Product entity to a DTO and return
+        ProductDTO deletedProductDTO = modelMapper.map(existingProduct, ProductDTO.class);
+        return deletedProductDTO;
+    }
+
 }
