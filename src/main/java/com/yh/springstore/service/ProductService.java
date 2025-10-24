@@ -8,13 +8,13 @@ import com.yh.springstore.payload.ProductDTO;
 import com.yh.springstore.payload.ProductResponse;
 
 public interface ProductService {
-    ProductResponse getProducts();
+    ProductResponse getProducts(int pageNumber, int pageSize, String sortBy, String sortOrder);
 
-    ProductResponse searchProductsByCategory(Long categoryId);
+    ProductResponse searchProductsByCategory(Long categoryId, int pageNumber, int pageSize, String sortBy, String sortOrder);
 
     ProductDTO addProduct(ProductDTO productDTO, Long categoryId);
 
-    ProductResponse searchProductsByKeyword(String keyword);
+    ProductResponse searchProductsByKeyword(String keyword, int pageNumber, int pageSize, String sortBy, String sortOrder);
 
     ProductDTO deleteProduct(Long productId);
 

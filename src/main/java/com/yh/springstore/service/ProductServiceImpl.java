@@ -10,6 +10,10 @@ import java.util.UUID;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,10 +45,16 @@ public class ProductServiceImpl implements ProductService {
     private String productsImagePath;
 
     @Override
-    public ProductResponse getProducts() {
-
-        // Fetch products from the database
-        List<Product> products = productRepository.findAll();
+    public ProductResponse getProducts(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+        // Configure Sorting Parameters
+        Sort pageSort = sortOrder.equalsIgnoreCase("ASC")
+        ? Sort.by(sortBy).ascending()
+        : Sort.by(sortBy).descending();
+        
+        // Fetch products from the database - with Pagination & Sorting -
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, pageSort);
+        Page<Product> productsPage = productRepository.findAll(pageDetails);
+        List<Product> products = productsPage.getContent();
 
         // Check if no products returned
         if (products.isEmpty())
@@ -61,13 +71,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse searchProductsByCategory(Long categoryId) {
+    public ProductResponse searchProductsByCategory(Long categoryId, int pageNumber, int pageSize, String sortBy, String sortOrder) {
         // Get the new Product Category by ID -if exists-
         Category existingCategory = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "CategoryId", categoryId));
 
-        // Fetch products from category
-        List<Product> products = existingCategory.getProducts();
+        // Configure Sorting Parameters
+        Sort pageSort = sortOrder.equalsIgnoreCase("ASC")
+        ? Sort.by(sortBy).ascending()
+        : Sort.by(sortBy).descending();
+        
+        // Fetch products from the database - with Pagination & Sorting -
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, pageSort);
+        Page<Product> productsPage = productRepository.findByCategory(existingCategory, pageDetails);
+        List<Product> products = productsPage.getContent();
 
         // Check if no products returned
         if (products.isEmpty())
@@ -112,9 +129,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse searchProductsByKeyword(String keyword) {
-        // Fetch products -with Keyword- from the Database
-        List<Product> products = productRepository.findByProductNameLikeIgnoreCase("%" + keyword + "%");
+    public ProductResponse searchProductsByKeyword(String keyword, int pageNumber, int pageSize, String sortBy, String sortOrder) {
+        // Configure Sorting Parameters
+        Sort pageSort = sortOrder.equalsIgnoreCase("ASC")
+        ? Sort.by(sortBy).ascending()
+        : Sort.by(sortBy).descending();
+        
+        // Fetch products -with Keyword- from the Database - with Pagination & Sorting -
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, pageSort);
+        Page<Product> productsPage = productRepository.findByProductNameLikeIgnoreCase("%" + keyword + "%", pageDetails);
+        List<Product> products = productsPage.getContent();
 
         // Check if no products returned
         if (products.isEmpty())
