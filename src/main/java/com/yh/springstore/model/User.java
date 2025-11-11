@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -55,7 +56,13 @@ public class User {
         fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_role", 
-        joinColumns = @JoinColumn(name = "roleId"), 
-        inverseJoinColumns = @JoinColumn(name = "userId"))
+        joinColumns = @JoinColumn(name = "role_id"), 
+        inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(
+        mappedBy = "seller",
+        cascade = {CascadeType.PERSIST, CascadeType.MERGE}, 
+        orphanRemoval = true)
+    private Set<Product> products;
 }
