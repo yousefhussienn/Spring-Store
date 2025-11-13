@@ -14,12 +14,13 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-// @Table(name = "addresses")
+@Table(name = "addresses")
 public class Address {
     
     @Id
@@ -47,6 +48,7 @@ public class Address {
     @Size(min = 6, max = 6, message = "Pincode must have {max} characters")
     private String pincode;
 
+    @ToString.Exclude
     @ManyToMany(mappedBy = "addresses")
     private List<User> users = new ArrayList<>();
 

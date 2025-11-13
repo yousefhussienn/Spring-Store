@@ -15,12 +15,14 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -34,21 +36,18 @@ public class User {
     private Long userId;
 
     @NotBlank
-    @Size(min = 5, message = "Username must have minimum 5 characters")
-    @Size(max = 20, message = "Username must have maximum 20 characters")
+    @Size(min = 5, max = 20, message = "Username must be between {min} and {max} characters")
     @Column(unique = true)
     private String userName;
 
     @NotBlank
-    @Size(min = 5, message = "Email must have minimum 5 characters")
-    @Size(max = 50, message = "Email must have maximum 50 characters")
+    @Size(min = 5, max = 50, message = "Email must be between {min} and {max} characters")
     @Email
     @Column(unique = true)
     private String email;
 
     @NotBlank
-    @Size(min = 10, message = "Password must have minimum 10 characters")
-    @Size(max = 100, message = "Password must have maximum 100 characters")
+    @Size(min = 10, max = 100, message = "Password must be between {min} and {max} characters")
     private String password;
 
     @ManyToMany(
@@ -60,6 +59,7 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @ToString.Exclude
     @OneToMany(
         mappedBy = "seller", 
         cascade = { CascadeType.PERSIST, CascadeType.MERGE }, 
