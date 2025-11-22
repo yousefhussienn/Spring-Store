@@ -56,29 +56,33 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-            .httpBasic(httpBasic -> {})
-            
-            .sessionManagement(
-                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(httpBasic -> {
+                })
+                // 
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Set our Custom Auth Exception Handler
+                .exceptionHandling(
+                        ex -> ex.authenticationEntryPoint(unauthorizedHandler))
 
-            .exceptionHandling(
-                ex -> ex.authenticationEntryPoint(unauthorizedHandler)) // Set our Custom Auth Exception Handler
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/h2-console/**").permitAll()
+                        // .requestMatchers("/v3/api-docs/**").permitAll() // could be used later
+                        // .requestMatchers("/swagger-ui/**").permitAll() // could be used later
+                        .requestMatchers("/api/auth/**").permitAll() // For both Login & Signup
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/images/**").permitAll()
+                        .requestMatchers("/api/admin/**").permitAll() // For Testing Purpose only
+                        .requestMatchers("/api/test/**").permitAll() // For Testing Purpose only
+                        .anyRequest().authenticated())
 
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/h2-console/**").permitAll()
-                // .requestMatchers("/v3/api-docs/**").permitAll() // could be used later
-                // .requestMatchers("/swagger-ui/**").permitAll()  // could be used later
-                .requestMatchers("/api/auth/**").permitAll() // For both Login & Signup
-                .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers("/images/**").permitAll()
-                .requestMatchers("/api/admin/**").permitAll() // For Testing Purpose only
-                .requestMatchers("/api/test/**").permitAll()  // For Testing Purpose only
-                .anyRequest().authenticated())
-
-            .authenticationProvider(authProvider())
-            .addFilterBefore(
-                authJwtTokenFilter(), 
-                UsernamePasswordAuthenticationFilter.class);
+                .authenticationProvider(authProvider())
+                .addFilterBefore(
+                        authJwtTokenFilter(),
+                        UsernamePasswordAuthenticationFilter.class)
+                // Allow frames (needed for H2 console)
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin()));
 
         return http.build();
     }
@@ -86,14 +90,13 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web -> web.ignoring()
-        .requestMatchers(
-            "/v3/api-docs",
-            "/swagger-resources",
-            "/swagger-ui.html",
-            "/configuration/security",
-            "/configuration/ui",
-            "/webjars/**"
-        ));
+                .requestMatchers(
+                        "/v3/api-docs",
+                        "/swagger-resources",
+                        "/swagger-ui.html",
+                        "/configuration/security",
+                        "/configuration/ui",
+                        "/webjars/**"));
     }
-  
+
 }
