@@ -8,12 +8,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class UserInfoResponse {
-    private String jwtToken;
-
     private Long id;
     private String username;
+    private String jwtToken;
     private List<String> roles;
-
 }
 
 
