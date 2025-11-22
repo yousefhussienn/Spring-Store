@@ -24,4 +24,9 @@ public class Role {
     @Enumerated(EnumType.STRING)
     @NotBlank
     private UserRole roleName;
+
+    public Role(@NotBlank UserRole roleName) {
+        this.roleName = roleName;
+    }
+    
 }
