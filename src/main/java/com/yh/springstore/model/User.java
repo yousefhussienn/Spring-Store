@@ -15,7 +15,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -38,7 +37,7 @@ public class User {
     @NotBlank
     @Size(min = 5, max = 20, message = "Username must be between {min} and {max} characters")
     @Column(unique = true)
-    private String userName;
+    private String username;
 
     @NotBlank
     @Size(min = 5, max = 50, message = "Email must be between {min} and {max} characters")

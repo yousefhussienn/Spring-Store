@@ -2,7 +2,6 @@ package com.yh.springstore.security.services;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -38,7 +37,7 @@ public class UserDetailsImpl implements UserDetails {
 
         return new UserDetailsImpl(
                 user.getUserId(),
-                user.getUserName(),
+                user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
                 auths);
@@ -59,14 +58,14 @@ public class UserDetailsImpl implements UserDetails {
         return username;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        UserDetailsImpl user = (UserDetailsImpl) o;
-        return Objects.equals(id, user.id);
-    }
+    // @Override
+    // public boolean equals(Object o) {
+    //     if (this == o)
+    //         return true;
+    //     if (o == null || getClass() != o.getClass())
+    //         return false;
+    //     UserDetailsImpl user = (UserDetailsImpl) o;
+    //     return Objects.equals(id, user.id);
+    // }
 
 }
