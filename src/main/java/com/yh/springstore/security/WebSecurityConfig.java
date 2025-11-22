@@ -1,6 +1,9 @@
 package com.yh.springstore.security;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +18,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.yh.springstore.model.Role;
+import com.yh.springstore.model.User;
+import com.yh.springstore.model.UserRole;
+import com.yh.springstore.repository.RoleRepository;
+import com.yh.springstore.repository.UserRepository;
 import com.yh.springstore.security.jwt.AuthEntryPointJwt;
 import com.yh.springstore.security.jwt.AuthTokenFilter;
 import com.yh.springstore.security.services.UserDetailsServiceImpl;
@@ -97,6 +105,59 @@ public class WebSecurityConfig {
                         "/configuration/security",
                         "/configuration/ui",
                         "/webjars/**"));
+    }
+
+
+    @Bean
+    public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        return args -> {
+            // Retrieve or create roles
+            Role userRole = roleRepository.findByRoleName(UserRole.ROLE_USER)
+                    .orElseGet(() -> roleRepository.save(new Role(UserRole.ROLE_USER)));
+
+            Role sellerRole = roleRepository.findByRoleName(UserRole.ROLE_SELLER)
+                    .orElseGet(() -> roleRepository.save(new Role(UserRole.ROLE_SELLER)));
+
+            Role adminRole = roleRepository.findByRoleName(UserRole.ROLE_ADMIN)
+                    .orElseGet(() -> roleRepository.save(new Role(UserRole.ROLE_ADMIN)));
+
+            Set<Role> userRoles = Set.of(userRole);
+            Set<Role> sellerRoles = Set.of(sellerRole);
+            Set<Role> adminRoles = Set.of(userRole, sellerRole, adminRole);
+
+
+            // Create users if not already present
+            if (!userRepository.existsByUsername("user1")) {
+                User user1 = new User("user1", "user1@example.com", passwordEncoder.encode("password1"));
+                userRepository.save(user1);
+            }
+
+            if (!userRepository.existsByUsername("seller1")) {
+                User seller1 = new User("seller1", "seller1@example.com", passwordEncoder.encode("password2"));
+                userRepository.save(seller1);
+            }
+
+            if (!userRepository.existsByUsername("admin")) {
+                User admin = new User("admin", "admin@example.com", passwordEncoder.encode("adminPass"));
+                userRepository.save(admin);
+            }
+
+            // Update roles for existing users
+            userRepository.findByUserName("user1").ifPresent(user -> {
+                user.setRoles(userRoles);
+                userRepository.save(user);
+            });
+
+            userRepository.findByUserName("seller1").ifPresent(seller -> {
+                seller.setRoles(sellerRoles);
+                userRepository.save(seller);
+            });
+
+            userRepository.findByUserName("admin").ifPresent(admin -> {
+                admin.setRoles(adminRoles);
+                userRepository.save(admin);
+            });
+        };
     }
 
 }
