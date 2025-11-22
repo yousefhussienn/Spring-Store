@@ -1,7 +1,6 @@
 package com.yh.springstore.controller;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -107,28 +106,21 @@ public class AuthController {
         newUser.setEmail(request.getEmail());
         newUser.setPassword(encoder.encode(request.getPassword()));
 
-        Set<Role> roles = new HashSet<>();
-        request.getRoles().forEach(role -> {
-            if(role == "admin")
-                roles.add(roleRepository
-                .findByRoleName(UserRole.ROLE_ADMIN)
-                .orElseThrow(() -> new ResourceNotFoundException("Role", "roleName", UserRole.ROLE_ADMIN.toString()))
-                );
-            else if (role == "seller")
-                roles.add(roleRepository
-                .findByRoleName(UserRole.ROLE_SELLER)
-                .orElseThrow(() -> new ResourceNotFoundException("Role", "roleName", UserRole.ROLE_SELLER.toString()))
-                );
-            else
-                roles.add(roleRepository
-                .findByRoleName(UserRole.ROLE_USER)
-                .orElseThrow(() -> new ResourceNotFoundException("Role", "roleName", UserRole.ROLE_USER.toString()))
-                );
-        });
+        Set<Role> roles = request.getRoles().stream()
+                .map(role -> {
+                    UserRole enumRole = switch (role.toLowerCase()) {
+                        case "admin" -> UserRole.ROLE_ADMIN;
+                        case "seller" -> UserRole.ROLE_SELLER;
+                        default -> UserRole.ROLE_USER;
+                    };
+                    return roleRepository.findByRoleName(enumRole)
+                            .orElseThrow(() -> new ResourceNotFoundException("Role", "roleName", enumRole.toString()));
+                })
+                .collect(Collectors.toSet());
         newUser.setRoles(roles);
 
         userRepository.save(newUser);
-        
+
         return new ResponseEntity<>("User registered successfully!", HttpStatus.OK);
     }
 }
