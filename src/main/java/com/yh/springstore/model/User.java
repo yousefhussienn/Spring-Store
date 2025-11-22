@@ -73,4 +73,13 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "address_id"))
     private Set<Address> addresses;
 
+    public User(
+            @NotBlank @Size(min = 5, max = 20, message = "Username must be between {min} and {max} characters") String username,
+            @NotBlank @Size(min = 5, max = 50, message = "Email must be between {min} and {max} characters") @Email String email,
+            @NotBlank @Size(min = 10, max = 100, message = "Password must be between {min} and {max} characters") String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+
 }
