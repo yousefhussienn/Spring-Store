@@ -5,15 +5,14 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.yh.springstore.model.Role;
 import com.yh.springstore.model.User;
+import com.yh.springstore.model.UserRole;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>{
+public interface RoleRepository extends JpaRepository<User, Long>{
 
-    Optional<User> findByUserName(String username);
+    Optional<Role> findByRoleName(UserRole roleAdmin);
 
-    boolean existsByUsername(String username);
-
-    boolean existsByEmail(String email);
     
 }
