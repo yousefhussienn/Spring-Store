@@ -10,7 +10,7 @@ import com.yh.springstore.model.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
 
-    Optional<User> findByUserName(String username);
+    Optional<User> findByUsername(String username);
 
     boolean existsByUsername(String username);
 
