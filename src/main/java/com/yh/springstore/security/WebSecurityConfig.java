@@ -79,9 +79,9 @@ public class WebSecurityConfig {
                         // .requestMatchers("/swagger-ui/**").permitAll() // could be used later
                         .requestMatchers("/api/auth/**").permitAll() // For both Login & Signup
                         .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/api/admin/**").permitAll() // For Testing Purpose only
                         .requestMatchers("/api/test/**").permitAll() // For Testing Purpose only
+                        .requestMatchers("/images/**").permitAll()
                         .anyRequest().authenticated())
 
                 .authenticationProvider(authProvider())
