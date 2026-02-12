@@ -106,6 +106,10 @@ public class AuthController {
         newUser.setEmail(request.getEmail());
         newUser.setPassword(encoder.encode(request.getPassword()));
 
+        if (request.getRoles() == null) {
+            request.setRoles(Set.of(""));;
+        }
+
         Set<Role> roles = request.getRoles().stream()
                 .map(role -> {
                     UserRole enumRole = switch (role.toLowerCase()) {
