@@ -7,7 +7,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -73,19 +75,29 @@ public class AuthController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
+        // String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(authority -> authority.getAuthority())
                 .collect(Collectors.toList());
 
+        // UserInfoResponse loginResponse = new UserInfoResponse(
+        //         userDetails.getId(),
+        //         userDetails.getUsername(),
+        //         roles,
+        //         jwtToken);
+
         UserInfoResponse loginResponse = new UserInfoResponse(
                 userDetails.getId(),
                 userDetails.getUsername(),
-                jwtToken,
-                roles);
+                roles,
+                jwtCookie.toString());
 
-        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+        // return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body(loginResponse);
     }
 
     @PostMapping("/signup")
@@ -107,7 +119,8 @@ public class AuthController {
         newUser.setPassword(encoder.encode(request.getPassword()));
 
         if (request.getRoles() == null) {
-            request.setRoles(Set.of(""));;
+            request.setRoles(Set.of(""));
+            ;
         }
 
         Set<Role> roles = request.getRoles().stream()

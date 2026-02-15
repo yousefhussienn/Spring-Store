@@ -10,8 +10,14 @@ import lombok.Data;
 public class UserInfoResponse {
     private Long id;
     private String username;
-    private String jwtToken;
     private List<String> roles;
+    private String jwtToken;
+
+    public UserInfoResponse(Long id2, String username2, List<String> roles2) {
+        id = id2;
+        username = username2;
+        roles = roles2;
+    }
 }
 
 
