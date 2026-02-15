@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,10 +84,10 @@ public class AuthController {
                 .collect(Collectors.toList());
 
         // UserInfoResponse loginResponse = new UserInfoResponse(
-        //         userDetails.getId(),
-        //         userDetails.getUsername(),
-        //         roles,
-        //         jwtToken);
+        // userDetails.getId(),
+        // userDetails.getUsername(),
+        // roles,
+        // jwtToken);
 
         UserInfoResponse loginResponse = new UserInfoResponse(
                 userDetails.getId(),
@@ -139,5 +140,37 @@ public class AuthController {
         userRepository.save(newUser);
 
         return new ResponseEntity<>("User registered successfully!", HttpStatus.OK);
+    }
+
+    @GetMapping("/username")
+    public String getUsername(Authentication authentication) {
+        if (authentication != null) {
+            return authentication.getName();
+        } else {
+            return "UnAuthenticated! Please Sign-in.";
+        }
+
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<?> getUserDetails(Authentication authentication) {
+        if (authentication != null) {
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(authority -> authority.getAuthority())
+                    .collect(Collectors.toList());
+
+            UserInfoResponse response = new UserInfoResponse(
+                    userDetails.getId(),
+                    userDetails.getUsername(),
+                    roles);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new APIResponse("Unauthenticated! Please Sign-in.", false));
+        }
     }
 }
