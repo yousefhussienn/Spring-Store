@@ -37,6 +37,8 @@ import com.yh.springstore.security.jwt.UserInfoResponse;
 import com.yh.springstore.security.services.UserDetailsImpl;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -173,4 +175,13 @@ public class AuthController {
                     .body(new APIResponse("Unauthenticated! Please Sign-in.", false));
         }
     }
+
+    @GetMapping("/signout")
+    public ResponseEntity<?> signout() {
+        ResponseCookie jwtCookie = jwtUtils.generateCleanCookie(); 
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body(new APIResponse("You have signed out!", true));
+    }
+    
 }
