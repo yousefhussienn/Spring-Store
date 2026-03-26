@@ -12,4 +12,6 @@ public interface CartService {
 
     CartDTO getCartForLoggedInUser();
 
+    CartDTO updateProductQuantityInCart(Long productId, int quantity);
+
 }
