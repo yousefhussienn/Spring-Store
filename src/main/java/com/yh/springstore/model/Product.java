@@ -46,7 +46,7 @@ public class Product {
     private String description;
 
     @NotNull
-    @Min(value = 1, message = "Quantity must be greater than 0")
+    @Min(value = 0, message = "Quantity cannot be less than 0")
     @Max(value = 100000, message = "Quantity limit exceeded")
     private int quantity;
 
