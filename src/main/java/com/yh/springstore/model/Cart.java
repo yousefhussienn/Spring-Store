@@ -27,7 +27,7 @@ public class Cart {
     private Long cartId;
 
     @OneToOne
-    @JoinColumn(name = "cart_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "cart", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
