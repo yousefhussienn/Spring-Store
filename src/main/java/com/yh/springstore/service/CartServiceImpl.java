@@ -17,6 +17,7 @@ import com.yh.springstore.payload.ProductDTO;
 import com.yh.springstore.repository.CartItemRepository;
 import com.yh.springstore.repository.CartRepository;
 import com.yh.springstore.repository.ProductRepository;
+import com.yh.springstore.util.AuthUtil;
 
 @Service
 public class CartServiceImpl implements CartService {
