@@ -47,7 +47,9 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
         // Perform Validations
-        CartItem cartItem = cartItemRepository.findByProductIdAndCartId(product.getProductId(), userCart.getCartId());
+        CartItem cartItem = cartItemRepository.findByProductIdAndCartId(product.getProductId(), userCart.getCartId())
+                .orElse(null);
+
         if (cartItem != null) {
             throw new APIException("Product (" + product.getProductName() + ") already added in cart!");
         }
@@ -90,7 +92,7 @@ public class CartServiceImpl implements CartService {
 
     private Cart getUserCart() {
         // Find existing cart By loggedin user email
-        Cart userCart = cartRepository.findCartByEmail(authUtil.loggedInEmail());
+        Cart userCart = cartRepository.findCartByEmail(authUtil.loggedInEmail()).orElse(null);
         if (userCart != null) {
             return userCart;
         }
