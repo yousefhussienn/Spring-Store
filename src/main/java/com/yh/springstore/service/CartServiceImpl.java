@@ -48,12 +48,13 @@ public class CartServiceImpl implements CartService {
 
         // Perform Validations
         CartItem cartItem = cartItemRepository.findByProductIdAndCartId(product.getProductId(), userCart.getCartId());
-        if(cartItem != null) {
+        if (cartItem != null) {
             throw new APIException("Product (" + product.getProductName() + ") already added in cart!");
         }
 
-        if(product.getQuantity() < quantity) {
-            throw new APIException("Needed Quantity for Product (" + product.getProductName() + ") is currently not available, Please check again later!");
+        if (product.getQuantity() < quantity) {
+            throw new APIException("Needed Quantity for Product (" + product.getProductName()
+                    + ") is currently not available, Please check again later!");
         }
 
         // Create Cart item // then Save in DB
@@ -101,6 +102,53 @@ public class CartServiceImpl implements CartService {
         userCart = cartRepository.save(newCart);
 
         return userCart;
+    }
+
+    @Override
+    public List<CartDTO> getAllCarts() {
+        List<Cart> carts = cartRepository.findAll();
+        if (carts.isEmpty()) {
+            throw new APIException("No Carts yet!");
+        }
+
+        // Map each Cart in List to DTO List
+        List<CartDTO> cartDTOs = carts.stream().map(cart -> {
+            // Map Cart entity to DTO
+            CartDTO newCartDTO = modelMapper.map(cart, CartDTO.class);
+
+            // Map Cart products list to DTO manually
+            List<CartItem> cartItems = cart.getCartItems();
+            Stream<ProductDTO> products = cartItems.stream().map(item -> {
+                ProductDTO productDTO = modelMapper.map(item.getProduct(), ProductDTO.class);
+                productDTO.setQuantity(item.getQuantity());
+                return productDTO;
+            });
+            newCartDTO.setProducts(products.toList());
+
+            return newCartDTO;
+        }).toList();
+
+        return cartDTOs;
+    }
+
+    @Override
+    public CartDTO getCartForLoggedInUser() {
+        // Find existing cart or Create new
+        Cart userCart = getUserCart();
+
+        // Map the saved Cart entity to DTO and return
+        CartDTO newCartDTO = modelMapper.map(userCart, CartDTO.class);
+
+        // Map Cart products list to DTO manually
+        List<CartItem> cartItems = userCart.getCartItems();
+        Stream<ProductDTO> products = cartItems.stream().map(item -> {
+            ProductDTO productDTO = modelMapper.map(item.getProduct(), ProductDTO.class);
+            productDTO.setQuantity(item.getQuantity());
+            return productDTO;
+        });
+        newCartDTO.setProducts(products.toList());
+
+        return newCartDTO;
     }
 
 }
