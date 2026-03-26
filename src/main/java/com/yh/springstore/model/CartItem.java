@@ -30,6 +30,10 @@ public class CartItem {
     private Product product;
 
     private Integer quantity;
-    private double discount;
+    private double discountPercent;
     private double productPrice;
+
+    public double calculateTotalPrice() {
+        return ((productPrice * (1 - discountPercent)) * quantity);
+    }
 }
