@@ -36,4 +36,9 @@ public class CartItem {
     public double calculateTotalPrice() {
         return ((productPrice * (1 - discountPercent)) * quantity);
     }
+
+    public void updatePriceFromProduct() {
+        this.productPrice = product.getPrice();
+        this.discountPercent = product.getDiscountPercent();
+    }
 }
