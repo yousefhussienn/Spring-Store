@@ -1,5 +1,8 @@
 package com.yh.springstore.service;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,8 +72,17 @@ public class CartServiceImpl implements CartService {
         cartRepository.save(userCart);
 
         // Map the saved Cart entity to DTO and return
-            // need to map cartItems list to DTO List first, then do the below
         CartDTO newCartDTO = modelMapper.map(userCart, CartDTO.class);
+
+        // Map Cart products list to DTO manually
+        List<CartItem> cartItems = userCart.getCartItems();
+        Stream<ProductDTO> products = cartItems.stream().map(item -> {
+            ProductDTO productDTO = modelMapper.map(item.getProduct(), ProductDTO.class);
+            productDTO.setQuantity(item.getQuantity());
+            return productDTO;
+        });
+        newCartDTO.setProducts(products.toList());
+
         return newCartDTO;
     }
 
