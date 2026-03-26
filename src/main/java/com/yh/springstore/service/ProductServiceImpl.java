@@ -53,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
 
         // Check if no products returned
         if (products.isEmpty())
-            throw new APIException("No Categories created yet !");
+            throw new APIException("No Products created yet !");
 
         // Map Product entities to DTOs using ModelMapper
         List<ProductDTO> productDTOs = products.stream()
