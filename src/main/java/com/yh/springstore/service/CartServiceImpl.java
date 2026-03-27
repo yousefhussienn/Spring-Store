@@ -71,10 +71,13 @@ public class CartServiceImpl implements CartService {
 
         cartItemRepository.save(newCartItem);
 
-        // Update Cart // then Save in DB
-        userCart.getCartItems().add(newCartItem);
+        // Add Item to Cart (maintain both sides "bidirectional DB relationship")
+        userCart.addItem(newCartItem);
+
+        // Update Cart Total
         userCart.calculateTotalPrice();
 
+        // Save Updated Cart in DB
         cartRepository.save(userCart);
 
         // Map the saved Cart entity to DTO and return
@@ -226,9 +229,8 @@ public class CartServiceImpl implements CartService {
         CartItem cartItem = cartItemRepository.findByProductIdAndCartId(product.getProductId(), userCart.getCartId())
                 .orElseThrow(() -> new ResourceNotFoundException("CartItem", "productId or cartId", productId));
 
-        // Remove Item from List in Cart (maintain both sides if bidirectional)
-        userCart.getCartItems().remove(cartItem);
-        cartItem.setCart(null);
+        // Remove Item from Cart (maintain both sides "bidirectional DB relationship")
+        userCart.removeItem(cartItem);
 
         // Update Cart Total
         userCart.calculateTotalPrice();

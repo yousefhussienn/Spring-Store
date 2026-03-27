@@ -42,4 +42,14 @@ public class Cart {
             .sum();
     }
 
+    public void addItem(CartItem item) {
+        cartItems.add(item);
+        item.setCart(this);
+    }
+    
+    public void removeItem(CartItem item) {
+        cartItems.remove(item);
+        item.setCart(null);
+    }
+
 }
