@@ -73,7 +73,7 @@ public class CartServiceImpl implements CartService {
 
         // Update Cart // then Save in DB
         userCart.getCartItems().add(newCartItem);
-        userCart.setTotalPrice(userCart.getTotalPrice() + newCartItem.calculateTotalPrice());
+        userCart.calculateTotalPrice();
 
         cartRepository.save(userCart);
 
@@ -231,7 +231,7 @@ public class CartServiceImpl implements CartService {
         cartItem.setCart(null);
 
         // Update Cart Total
-        userCart.setTotalPrice(userCart.getTotalPrice() - cartItem.calculateTotalPrice());
+        userCart.calculateTotalPrice();
         
         // Delete Item from DB
         cartItemRepository.delete(cartItem);

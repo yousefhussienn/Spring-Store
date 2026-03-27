@@ -36,4 +36,10 @@ public class Cart {
 
     private double totalPrice = 0.0;
 
+    public void calculateTotalPrice() {
+        totalPrice = cartItems.stream()
+            .mapToDouble(item -> item.calculateTotalPrice())
+            .sum();
+    }
+
 }
