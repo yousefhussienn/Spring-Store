@@ -155,6 +155,7 @@ public class CartServiceImpl implements CartService {
         return newCartDTO;
     }
 
+    @Transactional
     @Override
     public CartDTO updateProductQuantityInCart(Long productId, int quantity) {
         // Validation // Check if quantity less than 1
@@ -211,6 +212,7 @@ public class CartServiceImpl implements CartService {
         return newCartDTO;
     }
 
+    @Transactional
     @Override
     public CartDTO deleteProductFromCart(Long productId) {
         // Get Product details
