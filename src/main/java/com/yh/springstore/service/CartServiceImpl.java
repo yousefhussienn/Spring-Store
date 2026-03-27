@@ -63,10 +63,8 @@ public class CartServiceImpl implements CartService {
 
         // Create Cart item // then Save in DB
         CartItem newCartItem = new CartItem();
-        newCartItem.setCart(userCart);
         newCartItem.setProduct(product);
-        newCartItem.setProductPrice(product.getPrice());
-        newCartItem.setDiscountPercent(product.getDiscountPercent());
+        newCartItem.updatePriceFromProduct();
         newCartItem.setQuantity(quantity);
 
         cartItemRepository.save(newCartItem);
