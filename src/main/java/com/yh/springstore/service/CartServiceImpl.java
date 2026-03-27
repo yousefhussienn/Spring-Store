@@ -19,6 +19,8 @@ import com.yh.springstore.repository.CartRepository;
 import com.yh.springstore.repository.ProductRepository;
 import com.yh.springstore.util.AuthUtil;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -222,8 +224,10 @@ public class CartServiceImpl implements CartService {
         CartItem cartItem = cartItemRepository.findByProductIdAndCartId(product.getProductId(), userCart.getCartId())
                 .orElseThrow(() -> new ResourceNotFoundException("CartItem", "productId or cartId", productId));
 
-        // Remove Item from List in Cart
+        // Remove Item from List in Cart (maintain both sides if bidirectional)
         userCart.getCartItems().remove(cartItem);
+        cartItem.setCart(null);
+
         // Update Cart Total
         userCart.setTotalPrice(userCart.getTotalPrice() - cartItem.calculateTotalPrice());
         
