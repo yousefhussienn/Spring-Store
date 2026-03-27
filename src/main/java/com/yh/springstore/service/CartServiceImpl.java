@@ -209,4 +209,42 @@ public class CartServiceImpl implements CartService {
         return newCartDTO;
     }
 
+    @Override
+    public CartDTO deleteProductFromCart(Long productId) {
+        // Get Product details
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+        
+        // Find existing cart or Create new
+        Cart userCart = getUserCart();
+
+        // Find Cart item of the product in user Cart
+        CartItem cartItem = cartItemRepository.findByProductIdAndCartId(product.getProductId(), userCart.getCartId())
+                .orElseThrow(() -> new ResourceNotFoundException("CartItem", "productId or cartId", productId));
+
+        // Remove Item from List in Cart
+        userCart.getCartItems().remove(cartItem);
+        // Update Cart Total
+        userCart.setTotalPrice(userCart.getTotalPrice() - cartItem.calculateTotalPrice());
+        
+        // Delete Item from DB
+        cartItemRepository.delete(cartItem);
+        // Save Updated Cart in DB
+        cartRepository.save(userCart);
+
+        // Map the saved Cart entity to DTO and return
+        CartDTO newCartDTO = modelMapper.map(userCart, CartDTO.class);
+
+        // Map Cart products list to DTO manually
+        List<CartItem> cartItems = userCart.getCartItems();
+        Stream<ProductDTO> products = cartItems.stream().map(item -> {
+            ProductDTO productDTO = modelMapper.map(item.getProduct(), ProductDTO.class);
+            productDTO.setQuantity(item.getQuantity());
+            return productDTO;
+        });
+        newCartDTO.setProducts(products.toList());
+
+        return newCartDTO;
+    }
+
 }
