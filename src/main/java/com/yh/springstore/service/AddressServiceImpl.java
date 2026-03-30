@@ -22,16 +22,17 @@ public class AddressServiceImpl implements AddressService {
     ModelMapper modelMapper;
 
     @Override
-    public AddressDTO createAddress(AddressDTO address) {
-        // Check if not already exists
-        if (addressRepository.findById(address.getAddressId()) != null)
-            throw new APIException("Address is already exists!");
+    public AddressDTO createAddress(AddressDTO addressDTO) {
+        // Check if id is sent
+        if (addressDTO.getAddressId() != null)
+            throw new APIException("ID should not be provided when creating an address");
+        
+        // Map the incoming DTO to an Address entity
+        Address newAddress = modelMapper.map(addressDTO, Address.class);
+        // Save to DB
+        newAddress = addressRepository.save(newAddress);
 
-        // Map the incoming AddressDTO to a Address entity
-        Address newAddress = modelMapper.map(address, Address.class);
-        addressRepository.save(newAddress);
-
-        // Map the saved Address entity back to a DTO and return
+        // Map back to DTO, and return
         AddressDTO savedAddress = modelMapper.map(newAddress, AddressDTO.class);
         return savedAddress;
     }
