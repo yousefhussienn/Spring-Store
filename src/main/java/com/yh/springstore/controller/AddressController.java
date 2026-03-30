@@ -1,5 +1,7 @@
 package com.yh.springstore.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,11 @@ public class AddressController {
         return new ResponseEntity<>(savedAddressDTO, HttpStatus.CREATED);
     }
 
-    
+    @GetMapping("/addresses")
+    public ResponseEntity<List<AddressDTO>> getAllAddresses() {
+        List<AddressDTO> addresses = addressService.getAllAddresses();
+        return new ResponseEntity<>(addresses, HttpStatus.OK);
+    }
     
 
 }
