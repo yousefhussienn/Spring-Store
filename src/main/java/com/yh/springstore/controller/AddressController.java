@@ -23,13 +23,13 @@ public class AddressController {
     @Autowired
     AddressService addressService;    
 
-    @PostMapping("/user/address")
+    @PostMapping("/users/addresses")
     public ResponseEntity<AddressDTO> createAddress(@Valid @RequestBody AddressDTO address) {
         AddressDTO savedAddressDTO = addressService.createAddress(address);
         return new ResponseEntity<>(savedAddressDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("/addresses")
+    @GetMapping("/admin/addresses")
     public ResponseEntity<List<AddressDTO>> getAllAddresses() {
         List<AddressDTO> addresses = addressService.getAllAddresses();
         return new ResponseEntity<>(addresses, HttpStatus.OK);

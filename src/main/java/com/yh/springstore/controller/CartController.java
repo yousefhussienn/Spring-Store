@@ -33,7 +33,7 @@ public class CartController {
         return new ResponseEntity<>(cartDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("/carts")
+    @GetMapping("/admin/carts")
     public ResponseEntity<List<CartDTO>> getAllCarts() {
         List<CartDTO> carts = cartService.getAllCarts();
         return new ResponseEntity<>(carts, HttpStatus.OK);
@@ -53,7 +53,7 @@ public class CartController {
         return new ResponseEntity<>(cartDTO, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/carts/product/{productId}")
+    @DeleteMapping("/carts/products/{productId}")
     public ResponseEntity<CartDTO> deleteProductFromCart(
             @PathVariable Long productId) {
         CartDTO cartDTO = cartService.deleteProductFromCart(productId);
