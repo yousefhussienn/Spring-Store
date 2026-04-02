@@ -66,12 +66,11 @@ public class User {
         orphanRemoval = true)
     private Set<Product> products;
 
-    @ManyToMany(
-        cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(
-        name = "user_address", 
-        joinColumns = @JoinColumn(name = "user_id"), 
-        inverseJoinColumns = @JoinColumn(name = "address_id"))
+    @OneToMany(
+        mappedBy = "user",
+        cascade = { CascadeType.PERSIST, CascadeType.MERGE },
+        orphanRemoval = true
+    ) 
     private Set<Address> addresses;
 
     @ToString.Exclude
@@ -85,6 +84,16 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public void addAddress(Address address) {
+        addresses.add(address);
+        address.setUser(this);
+    }
+
+    public void removeAddress(Address address) {
+        addresses.remove(address);
+        address.setUser(null);
     }
 
 }
