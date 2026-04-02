@@ -69,4 +69,18 @@ public class AddressServiceImpl implements AddressService {
         return addressDTOs;
     }
 
+    @Override
+    public List<AddressDTO> getAddressForLoggedInUser() {
+        // Get Addresses for logged in user
+        List<Address> addresses = addressRepository.findByUserEmail(authUtil.loggedInEmail());
+       
+        // Map List to DTOs
+        List<AddressDTO> addressDTOs = new ArrayList<>();
+        addresses.forEach(address -> {
+            addressDTOs.add(modelMapper.map(address, AddressDTO.class));
+        });
+
+        return addressDTOs;
+    }
+
 }
