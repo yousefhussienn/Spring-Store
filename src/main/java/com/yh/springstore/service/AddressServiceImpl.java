@@ -74,6 +74,10 @@ public class AddressServiceImpl implements AddressService {
     public List<AddressDTO> getAddressForLoggedInUser() {
         // Get Addresses for logged in user
         List<Address> addresses = addressRepository.findByUserEmail(authUtil.loggedInEmail());
+
+        // Check if empty
+        if (addresses.isEmpty())
+            throw new APIException("No Addresses created yet!");
        
         // Map List to DTOs
         List<AddressDTO> addressDTOs = new ArrayList<>();
