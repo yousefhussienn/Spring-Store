@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.yh.springstore.exception.APIException;
 import com.yh.springstore.exception.ResourceNotFoundException;
 import com.yh.springstore.model.Address;
+import com.yh.springstore.model.Product;
 import com.yh.springstore.model.User;
 import com.yh.springstore.payload.AddressDTO;
 import com.yh.springstore.repository.AddressRepository;
@@ -93,6 +94,28 @@ public class AddressServiceImpl implements AddressService {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "AddressId", addressId));        
         return modelMapper.map(address, AddressDTO.class);
+    }
+
+    @Override
+    public AddressDTO updateAddress(Long addressId, AddressDTO addressDTO) {
+        // Get the Address by ID -if exists-
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new ResourceNotFoundException("Address", "AddressId", addressId));        
+
+        // Update Address
+        address.setStreet(addressDTO.getStreet());
+        address.setBuildingName(addressDTO.getBuildingName());
+        address.setCity(addressDTO.getCity());
+        address.setState(addressDTO.getState());
+        address.setCountry(addressDTO.getCountry());
+        address.setPincode(addressDTO.getPincode());
+
+        // Save Updated Address in DB
+        address = addressRepository.save(address);
+
+        // Map to DTO, and return
+        AddressDTO savedAddress = modelMapper.map(address, AddressDTO.class);
+        return savedAddress;
     }
 
 }
