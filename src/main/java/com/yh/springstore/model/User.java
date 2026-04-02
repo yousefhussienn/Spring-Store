@@ -20,12 +20,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
@@ -33,6 +37,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long userId;
 
     @NotBlank
@@ -66,6 +71,7 @@ public class User {
         orphanRemoval = true)
     private Set<Product> products;
 
+    @ToString.Exclude
     @OneToMany(
         mappedBy = "user",
         cascade = { CascadeType.PERSIST, CascadeType.MERGE },
