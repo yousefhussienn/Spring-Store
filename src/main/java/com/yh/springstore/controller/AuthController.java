@@ -37,7 +37,6 @@ import com.yh.springstore.security.jwt.UserInfoResponse;
 import com.yh.springstore.security.services.UserDetailsImpl;
 
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
