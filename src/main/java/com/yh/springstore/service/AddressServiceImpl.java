@@ -102,6 +102,11 @@ public class AddressServiceImpl implements AddressService {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "AddressId", addressId));        
 
+        // Ensure address belongs to logged-in user
+        if(!address.getUser().getEmail().equals(authUtil.loggedInEmail())) {
+            throw new ResourceNotFoundException("Address", "AddressId", addressId);
+        }
+
         // Update Address
         address.setStreet(addressDTO.getStreet());
         address.setBuildingName(addressDTO.getBuildingName());
