@@ -4,8 +4,6 @@ import java.util.List;
 
 import com.yh.springstore.payload.AddressDTO;
 
-import jakarta.validation.Valid;
-
 public interface AddressService {
 
     AddressDTO createAddress(AddressDTO address);
@@ -17,5 +15,7 @@ public interface AddressService {
     AddressDTO getAddressById(Long addressId);
 
     AddressDTO updateAddress(Long addressId, AddressDTO addressDTO);
+
+    AddressDTO deleteAddress(Long addressId);
 
 }

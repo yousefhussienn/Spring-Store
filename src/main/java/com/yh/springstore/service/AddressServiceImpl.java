@@ -123,4 +123,23 @@ public class AddressServiceImpl implements AddressService {
         return savedAddress;
     }
 
+    @Override
+    public AddressDTO deleteAddress(Long addressId) {
+        // Get the Address by ID -if exists-
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new ResourceNotFoundException("Address", "AddressId", addressId));        
+
+        // Ensure address belongs to logged-in user
+        if(!address.getUser().getEmail().equals(authUtil.loggedInEmail())) {
+            throw new ResourceNotFoundException("Address", "AddressId", addressId);
+        }
+
+        // Delete Address in DB
+        addressRepository.delete(address);
+
+        // Map to DTO, and return
+        AddressDTO deletedAddress = modelMapper.map(address, AddressDTO.class);
+        return deletedAddress;
+    }
+
 }
