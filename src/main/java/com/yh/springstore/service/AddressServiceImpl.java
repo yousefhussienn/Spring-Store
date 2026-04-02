@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.yh.springstore.exception.APIException;
 import com.yh.springstore.exception.ResourceNotFoundException;
 import com.yh.springstore.model.Address;
-import com.yh.springstore.model.Product;
 import com.yh.springstore.model.User;
 import com.yh.springstore.payload.AddressDTO;
 import com.yh.springstore.repository.AddressRepository;
@@ -134,7 +133,7 @@ public class AddressServiceImpl implements AddressService {
             throw new ResourceNotFoundException("Address", "AddressId", addressId);
         }
 
-        // Delete Address in DB
+        // Delete Address from DB
         addressRepository.delete(address);
 
         // Map to DTO, and return
