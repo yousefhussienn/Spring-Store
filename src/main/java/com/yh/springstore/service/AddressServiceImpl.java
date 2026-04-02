@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yh.springstore.exception.APIException;
+import com.yh.springstore.exception.ResourceNotFoundException;
 import com.yh.springstore.model.Address;
 import com.yh.springstore.model.User;
 import com.yh.springstore.payload.AddressDTO;
@@ -81,6 +82,13 @@ public class AddressServiceImpl implements AddressService {
         });
 
         return addressDTOs;
+    }
+
+    @Override
+    public AddressDTO getAddressById(Long addressId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new ResourceNotFoundException("Address", "AddressId", addressId));        
+        return modelMapper.map(address, AddressDTO.class);
     }
 
 }
